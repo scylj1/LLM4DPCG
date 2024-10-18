@@ -9,7 +9,6 @@ def openai_inference(args):
     model = args.model_name
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", args.openai_key))
     directory = args.data_dir
-    fail_list = []
 
     for i, filename in enumerate(os.listdir(directory)):
         if filename.endswith('.json'):  
@@ -17,13 +16,13 @@ def openai_inference(args):
             with open(filepath, 'r', encoding='utf-8') as file: 
                 data = json.load(file)  
                 
-                if model+"-claims" in data:
+                if model+"-claim" in data:
                     print(filepath + " exist")
                     continue 
                 
                 description = data["full_description"]  
     
-                messages=[{"role": "system", "content": "You are a patent expert. Given the following patent description, write patent claims and patent abstract. The answer should be in the format of: Patent claims: generated patent claims. ##seperator## Patent abstract: generated patent abstract. "}]    
+                messages=[{"role": "system", "content": "You are a patent expert. Given the following patent description, generate patent claims. "}]    
                 messages.append({"role": "user", "content": description})
                 try:
                     response = client.chat.completions.create(
@@ -35,25 +34,13 @@ def openai_inference(args):
 
                     text = response.choices[0].message.content
                     text = text.replace("\n", " ")
-                    separator = "##seperator##"
-                    parts = text.split(separator)
 
-                    claims = parts[0]
-                    abstract = parts[1]
-                    data[model+"-claims"] = claims
-                    data[model+"-astract"] = abstract
-           
-                    print(data["application_number"])
-                    print(data[model+"-claims"])
-                    print(response.usage.completion_tokens)
-                    # print(data[model+"-astract"])
+                    data[model+"-claim"] = text
                                     
                 except Exception as e:
                     
                     print("An error occurred:", e)
-                    print("fail")
                     print(data["application_number"])
-                    fail_list.append(data["application_number"])
                     continue
 
             with open(filepath, 'w') as file:
@@ -61,9 +48,6 @@ def openai_inference(args):
             
             if i % 50 == 0:
                 print(f"{i} documents complete")    
-        
-    with open("fail_list.json", 'w') as file:
-        json.dump(fail_list, file)
 
         
 if __name__=='__main__':

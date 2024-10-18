@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--base_model", type=str, default="../../../Meta-Llama-3-8B-Instruct-hf/")
     parser.add_argument("--peft_path", type=str, default=None)
-    parser.add_argument("--directory", type=str, default="../../dataset/test")
+    parser.add_argument("--directory", type=str, default="../dataset/test")
     parser.add_argument("--model_name", type=str, default="test")
   
 
@@ -166,8 +166,6 @@ if __name__ == "__main__":
                                             pad_token='<pad>')
 
     directory = args.directory
-    abstracts = []
-    descriptions = []
 
     for i, filename in enumerate(os.listdir(directory)):
         if filename.endswith('.json'):  
@@ -175,17 +173,13 @@ if __name__ == "__main__":
             with open(filepath, 'r', encoding='utf-8') as file: 
                 data = json.load(file)  
 
-                abstract = data["abstract"]
                 description = data["full_description"]
-               
-                abstracts.append(abstract)
-                descriptions.append(description)
                 
                 instruction = "Given the following patent description, generate patent claims. Patent description: " + description
                 prompts = [f"{HUMAN_ROLE_START_TAG}{instruction}\n{BOT_ROLE_START_TAG}"]
                 text = hf_inference(model, tokenizer, prompts, do_sample=True, temperature=0.1, max_new_tokens=1024)
                 
-                data[args.model_name+"-claims"] = text
+                data[args.model_name+"-claim"] = text
         
             with open(filepath, 'w') as file:
                 json.dump(data, file)

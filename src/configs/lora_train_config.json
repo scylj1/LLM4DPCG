@@ -1,8 +1,8 @@
 {
     "data_paths": "[../dataset/train_description_claim]",
-    "output_dir": "../llama3-8b-claim",
+    "output_dir": "../llama3-8b-ft",
     "tb_dir": "../tb_dir",
-    "pretrained_model_path": "../../Meta-Llama-3-8B-Instruct-hf/",
+    "pretrained_model_path": "meta-llama/Meta-Llama-3-8B-Instruct/",
     "model_type": "llama",
     "load_raw_dataset": true,
     "data_split": "90,10,0",

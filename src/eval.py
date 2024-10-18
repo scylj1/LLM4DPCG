@@ -46,7 +46,7 @@ def eval(args):
                     if data_type == "claims":
                         text = data[model]
                         outputs.append(text)
-                        reference_text.append(text)
+                        reference_text.append(data["claims"])
                              
                     elif data_type == "abstract":
                         outputs.append(data[model])
@@ -69,7 +69,7 @@ if __name__=='__main__':
 
     parser.add_argument("--model_name", type=str, default=None)
     parser.add_argument("--data_type", type=str, default="claims")
-    parser.add_argument("--data_dir", type=str, default="../../dataset/test")
+    parser.add_argument("--data_dir", type=str, default="test")
 
     args = parser.parse_args()
     
